@@ -10,20 +10,20 @@ import React, { useEffect, useMemo, useState } from "react";
 
 // Utilitários
 
-// 💰 moeda BRL
+// moeda BRL
 const fmtBRL = (n) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(
     Number(n || 0)
   );
 
-// 📅 helper: somar dias a um ISO
+// helper: somar dias a um ISO
 const addDaysISO = (iso, days) => {
   const d = iso ? new Date(iso) : new Date();
   d.setDate(d.getDate() + days);
   return d.toISOString();
 };
 
-// 🧾 textos padrão
+// textos padrão
 const TERMO_GARANTIA_PADRAO =
   "3 meses de garantia contra algum defeito de fábrica na peça ou serviço realizado, " +
   "garantia não cobre aparelhos molhados ou danificados após o serviço.";
@@ -31,7 +31,7 @@ const TERMO_GARANTIA_PADRAO =
 const OBS_PADRAO =
   "Aparelhos não retirados dentro do prazo de 90 dias, estarão sujeitos a desmontagem, reciclagem e venda!";
 
-// 🧮 totais
+// totais
 const calcTotais = (os) => {
   const merc = Number(os.totalMercadorias || 0);
   const serv = Number(os.totalServicos || 0);
@@ -463,9 +463,10 @@ export default function SistemaOS() {
       .row { display:flex; gap:16px; }
       .col { flex:1; }
       .card { border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-top:16px; }
+      
       /* Descrição + Técnico lado a lado */
-.card .row .col.desc { flex: 1 1 72%; }        /* ocupa a maior parte */
-.card .row .col.tech { flex: 0 0 28%; max-width: 28%; }  /* coluna mais estreita */
+.card .row .col.desc { flex: 1 1 72%; }      
+.card .row .col.tech { flex: 0 0 28%; max-width: 28%; } 
       .muted { color:#475569; }
       .title { font-size:20px; font-weight:700; margin:0; }
       .h { font-size:14px; font-weight:600; color:#334155; margin-bottom:6px; }
@@ -484,30 +485,86 @@ export default function SistemaOS() {
 .card.totais .h { margin-bottom: 6px; }
 .card.totais table.compact th,
 .card.totais table.compact td {
-  padding: 4px 6px;          /* menos altura por linha */
-  font-size: 12px;           /* menor fonte só aqui */
-  border-bottom: none;       /* remove linhas extras */
+  padding: 4px 6px;        
+  font-size: 12px;          
+  border-bottom: none;       
 }
 .card.totais table.compact th { width: 65%; font-weight:600; color:#334155; }
 .card.totais table.compact tr.total th,
 .card.totais table.compact tr.total td {
   padding-top: 6px;
-  border-top: 1px solid #e2e8f0; /* separador só antes do total */
+  border-top: 1px solid #e2e8f0;
   font-size: 13px;
 }
 
 /* Conserto: mais legível */
-.row.gap-lg { gap: 24px; }              /* mais espaço entre colunas */
+.row.gap-lg { gap: 24px; }   
 .kv{ display:flex; flex-direction:column; gap:4px; }
 .kv .lab{ font-size:12px; font-weight:700; color:#334155; }
 .kv .val{ font-size:13px; }
 .section-sep{ height:1px; background:#e2e8f0; margin:10px 0 12px; }
 
-/* Pequenos ajustes globais para caber em 1 página */
-@media print {
-  @page { size: A4; margin: 10mm 10mm; }  /* reduz margens da página */
-  body { margin: 0; }                      /* ignora margin: 32px do body ao imprimir */
+/* --- layout tipo formulário (todos os blocos) --- */
+.form-grid-1{display:grid;grid-template-columns:1fr;gap:12px}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.form-grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.form-grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field .label{font-size:12px;font-weight:600;color:#334155}
+.field .input{border:1px solid #e2e8f0;border-radius:12px;padding:10px 12px;min-height:38px;background:#fff;font-size:13px}
+.field .input.pre{white-space:pre-wrap}
+.field .input.textarea{min-height:90px}
+.field .input.right{text-align:right}
+.field .input.sign{border:1px dashed #94a3b8;border-radius:10px;min-height:90px;background:#fff}
+
+/* grid 3 colunas com a 1ª mais larga (Descrição) */
+.form-grid-details{
+  display:grid;
+  grid-template-columns: 2fr 1fr 0.9fr; /* descrição | técnico | status */
+  gap:12px;
+  align-items:start;
 }
+
+/* Totais em 4 colunas na impressão */
+.form-grid-totais{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; /* Mercadorias | Serviços | Descontos | Total */
+  gap:12px;
+  align-items:start;
+}
+
+@media print {
+  @page { size: A4; margin: 8mm; } 
+  html, body { margin:0; }
+
+  /* compacta geral */
+  .card{ padding:12px; margin-top:10px; }
+  .title{ font-size:19px; }
+  .h{ font-size:13px; }
+  .muted{ font-size:12px; }
+  .logo{ height:48px; }  
+
+  .field .label{ font-size:12px; }   
+  .field .input{ font-size:13px; padding:9px 11px; min-height:36px; } 
+  .input.right{ text-align:right; }
+
+  /* textões ficam baixinhos */
+  .card .input.textarea{ min-height:56px; } 
+  /* se quiser ainda menor: 46px */
+
+  /* detalhes em 3 colunas e totais em 4 colunas */
+  .form-grid-details{ grid-template-columns:2fr 1fr 0.9fr; gap:10px; }
+  .form-grid-totais{ grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; }
+
+  /* assinaturas mais baixas */
+  .sign{ min-height:60px; margin-top:14px; }
+
+  /* rodapé curtinho */
+  .foot{ margin-top:10px; font-size:11px; }
+}
+
+
     </style>
   `;
 
@@ -550,147 +607,138 @@ export default function SistemaOS() {
 
       <!-- DESTINATÁRIO -->
       <div class="card">
-        <div class="h">Destinatário</div>
-        <div class="row">
-          <div class="col"><div class="h">Nome/Razão Social</div><div class="v">${
-            item.cliente || "—"
-          }</div></div>
-          <div class="col"><div class="h">CPF/CNPJ</div><div class="v">${
-            item.cpfCnpj || "—"
-          }</div></div>
-          <div class="col"><div class="h">Telefone</div><div class="v">${
-            item.telefone || "—"
-          }</div></div>
-        </div>
-      </div>
+  <div class="h">Destinatário</div>
+  <div class="form-grid-3">
+    <div class="field">
+      <div class="label">Nome / Razão Social</div>
+      <div class="input">${item.cliente || "—"}</div>
+    </div>
+    <div class="field">
+      <div class="label">CPF / CNPJ</div>
+      <div class="input">${item.cpfCnpj || "—"}</div>
+    </div>
+    <div class="field">
+      <div class="label">Telefone</div>
+      <div class="input">${item.telefone || "—"}</div>
+    </div>
+  </div>
+</div>
 
       <!-- CONSERTO -->
       <div class="card">
   <div class="h">Conserto</div>
 
-  <!-- Linha 1: marca, modelo, prioridade, status -->
-  <div class="row gap-lg">
-    <div class="col">
-      <div class="kv">
-        <div class="lab">Marca</div>
-        <div class="val">${item.marca || "—"}</div>
-      </div>
+  <div class="form-grid-4">
+    <div class="field">
+      <div class="label">Marca</div>
+      <div class="input">${item.marca || "—"}</div>
     </div>
-    <div class="col">
-      <div class="kv">
-        <div class="lab">Modelo</div>
-        <div class="val">${item.modelo || "—"}</div>
-      </div>
+    <div class="field">
+      <div class="label">Modelo</div>
+      <div class="input">${item.modelo || "—"}</div>
     </div>
-    <div class="col">
-      <div class="kv">
-        <div class="lab">Prioridade</div>
-        <div class="val"><span class="badge">${prioridadeLabel}</span></div>
-      </div>
+    <div class="field">
+      <div class="label">Data de garantia (término)</div>
+      <div class="input">${
+        item.dataGarantia ? fmtDate(item.dataGarantia) : "—"
+      }</div>
     </div>
-    <div class="col">
-      <div class="kv">
-        <div class="lab">Status</div>
-        <div class="val"><span class="badge">${statusLabel}</span></div>
-      </div>
+    <div class="field">
+      <div class="label">Prioridade</div>
+      <div class="input">${prioridadeLabel}</div>
     </div>
   </div>
 
-  <div class="section-sep"></div>
+  <div style="height:10px"></div>
 
-  <!-- Linha 2: condições -->
-  <div class="row gap-lg">
-    <div class="col">
-      <div class="kv">
-        <div class="lab">Condições</div>
-        <div class="val" style="white-space:pre-wrap;">
-          ${item.condicoes || "—"}
-        </div>
-      </div>
+  <div class="form-grid-3">
+    <div class="field" style="grid-column:1 / span 2">
+      <div class="label">Condições</div>
+      <div class="input textarea pre">${item.condicoes || "—"}</div>
     </div>
-  </div>
-
-  <div class="section-sep"></div>
-
-  <!-- Linha 3: termo + data de garantia -->
-  <div class="row gap-lg">
-    <div class="col">
-      <div class="kv">
-        <div class="lab">Termo de Garantia</div>
-        <div class="val" style="white-space:pre-wrap;">
-          ${item.termoGarantia || ""}
-        </div>
-      </div>
-    </div>
-    <div class="col" style="max-width:40%;">
-      <div class="kv">
-        <div class="lab">Data de Garantia (término)</div>
-        <div class="val">
-          ${item.dataGarantia ? fmtDate(item.dataGarantia) : "—"}
-        </div>
-      </div>
+    <div class="field">
+      <div class="label">Termo de Garantia</div>
+      <div class="input textarea pre">${item.termoGarantia || ""}</div>
     </div>
   </div>
 </div>
 
-      <!-- DESCRIÇÃO -->
-      <div class="card">
-  <div class="row">
-    <div class="col desc">
-      <div class="h">Descrição do Serviço</div>
-      <div class="v" style="white-space:pre-wrap;">
-        ${item.descricao || "—"}
-      </div>
+     <!-- DETALHES -->
+<div class="card">
+  <div class="h">Detalhes</div>
+  <div class="form-grid-details">
+    <div class="field">
+      <div class="label">Descrição do serviço</div>
+      <div class="input textarea pre">${item.descricao || "—"}</div>
     </div>
-    <div class="col tech">
-      <div class="h">Técnico</div>
-      <div class="v">${item.tecnico || "—"}</div>
+    <div class="field">
+      <div class="label">Técnico</div>
+      <div class="input">${item.tecnico || "—"}</div>
+    </div>
+    <div class="field">
+      <div class="label">Status</div>
+      <div class="input">${
+        {
+          aberta: "Aberta",
+          andamento: "Em andamento",
+          concluida: "Concluída",
+          cancelada: "Cancelada",
+        }[item.status] || "—"
+      }</div>
     </div>
   </div>
 </div>
 
       <!-- TOTAIS -->
-      <div class="card totais">
-        <div class="h">Totais</div>
-        <table class="compact">
-          <tbody>
-            <tr><th>Mercadorias</th><td>${fmtBRL(t.merc)}</td></tr>
-            <tr><th>Serviços</th><td>${fmtBRL(t.serv)}</td></tr>
-            <tr>
-              <th>Descontos</th>
-              <td>${
-                (t.desc$ > 0 ? "-" + fmtBRL(t.desc$) : fmtBRL(0)) +
-                (t.descPct > 0 ? ` (${t.descPct}%)` : "")
-              }</td>
-            </tr>
-            <tr class="total"><th>Total</th><td><strong>${fmtBRL(
-              t.total
-            )}</strong></td></tr>
-          </tbody>
-        </table>
-      </div>
+<div class="card">
+  <div class="h">Totais</div>
+  <div class="form-grid-totais">
+    <div class="field">
+      <div class="label">Mercadorias</div>
+      <div class="input right">${fmtBRL(t.merc)}</div>
+    </div>
+    <div class="field">
+      <div class="label">Serviços</div>
+      <div class="input right">${fmtBRL(t.serv)}</div>
+    </div>
+    <div class="field">
+      <div class="label">Descontos</div>
+      <div class="input right">${
+        (t.desc$ > 0 ? "-" + fmtBRL(t.desc$) : fmtBRL(0)) +
+        (t.descPct > 0 ? ` (${t.descPct}%)` : "")
+      }</div>
+    </div>
+    <div class="field">
+      <div class="label">Total</div>
+      <div class="input right"><strong>${fmtBRL(t.total)}</strong></div>
+    </div>
+  </div>
+</div>
 
       <!-- OBSERVAÇÕES -->
-      <div class="card">
-        <div class="h">Observações</div>
-        <div class="v" style="white-space:pre-wrap;">${
-          item.observacoes || ""
-        }</div>
-      </div>
+<div class="card">
+  <div class="form-grid-1">
+    <div class="field">
+      <div class="label">Observações</div>
+      <div class="input textarea pre">${item.observacoes || ""}</div>
+    </div>
+  </div>
+</div>
 
       <!-- ASSINATURAS -->
-      <div class="card">
-        <div class="row">
-          <div class="col">
-            <div class="h">Assinatura do Cliente</div>
-            <div class="sign"></div>
-          </div>
-          <div class="col">
-            <div class="h">Assinatura do Técnico</div>
-            <div class="sign"></div>
-          </div>
-        </div>
-      </div>
+<div class="card">
+  <div class="h">Assinaturas</div>
+  <div class="form-grid-2">
+    <div class="field">
+      <div class="label">Assinatura do Cliente</div>
+      <div class="input sign"></div>
+    </div>
+    <div class="field">
+      <div class="label">Assinatura do Técnico</div>
+      <div class="input sign"></div>
+    </div>
+  </div>
+</div>
 
       <div class="foot">Gerado pelo Sistema de OS — ${new Date().toLocaleString()}</div>
 
@@ -703,7 +751,31 @@ export default function SistemaOS() {
     win.document.open();
     win.document.write(html);
     win.document.close();
-    win.onload = () => win.print();
+    win.onload = () => {
+      const mmToPx = (mm) => (mm / 25.4) * 96; // 96dpi
+      const printableHeight = mmToPx(297 - 2 * 8); // A4, margens @page 8mm
+
+      const doc = win.document;
+      requestAnimationFrame(() => {
+        const contentH = doc.body.scrollHeight;
+
+        // usa ~98.5% da folha pra não arriscar quebra
+        const target = printableHeight * 0.985;
+        let scale = target / contentH;
+
+        // pode crescer até 1.06x e nunca ficar menor que 0.90x
+        scale = Math.max(0.9, Math.min(1.06, scale));
+
+        doc.body.style.zoom = scale; // Chrome/Edge
+        if (getComputedStyle(doc.body).zoom === "normal") {
+          // Firefox/Safari fallback
+          doc.body.style.transformOrigin = "top left";
+          doc.body.style.transform = `scale(${scale})`;
+        }
+
+        win.print();
+      });
+    };
   };
 
   // ===== Numeração automática =====
